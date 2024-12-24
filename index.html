@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Ball Mágica</title>
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            background-color: #121212; /* Fondo negro */
+            color: #e0e0e0; /* Texto blanco grisáceo */
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #ff9800; /* Naranja brillante */
+            font-size: 3rem;
+            margin-top: 50px;
+        }
+
+        p {
+            color: #b0bec5; /* Gris suave */
+            font-size: 1.2rem;
+            margin: 10px 0 20px 0;
+        }
+
+        #game-container {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 400px;
+            border: 2px solid #ff9800;
+            border-radius: 15px;
+            background-color: #1e1e1e; /* Fondo más oscuro */
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #ff9800;
+            border-radius: 8px;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #ff9800;
+            color: #121212;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #ffb74d; /* Más claro al pasar el mouse */
+        }
+
+        #response {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff; /* Azul para la respuesta */
+        }
+
+        .ball {
+            margin: 20px auto;
+            width: 150px;
+            height: 150px;
+            background-color: black;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.1);
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 50px solid #03a9f4; /* Azul del triángulo */
+            position: absolute;
+        }
+
+        .triangle-text {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Bola 8 Mágica</h1>
+    <p>Haz una pregunta y haz clic en la bola para obtener tu respuesta.</p>
+
+    <div id="game-container">
+        <input type="text" id="question" placeholder="Escribe tu pregunta...">
+        <div class="ball" onclick="askQuestion()">
+            <div class="triangle"></div>
+            <div class="triangle-text" id="response">?</div>
+        </div>
+    </div>
+
+    <script>
+        const answers = [
+            "Sí", "No", "Tal vez", "Definitivamente", 
+            "Absolutamente no", "Pregunta de nuevo", 
+            "Es muy probable", "Poco probable", 
+            "¡Claro que sí!", "No lo creo", "Obviamente"
+        ];
+
+        function askQuestion() {
+            const question = document.getElementById("question").value;
+            const responseElement = document.getElementById("response");
+
+            if (!question) {
+                responseElement.textContent = "Haz una pregunta.";
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * answers.length);
+            const response = answers[randomIndex];
+
+            responseElement.textContent = response;
+
+            // Animación de sacudida
+            const ball = document.querySelector(".ball");
+            ball.style.animation = "none"; // Reinicia la animación
+            setTimeout(() => {
+                ball.style.animation = "";
+            }, 10);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Infinita</title>
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            background-color: #0d1b0d; /* Fondo verde oscuro */
+            color: #d4f1d4; /* Verde claro para el texto */
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #34c759; /* Verde atractivo */
+            font-size: 2.8rem;
+            margin-top: 20px;
+            text-shadow: 0 0 15px rgba(52, 199, 89, 0.8);
+        }
+
+        #game-container {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 600px;
+            border-radius: 15px;
+            background-color: #142414; /* Fondo un poco más claro */
+            box-shadow: 0 0 20px rgba(52, 199, 89, 0.6);
+        }
+
+        .question-text {
+            font-size: 1.8rem;
+            margin: 15px 0;
+            color: #d4f1d4;
+            font-weight: bold;
+        }
+
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .option {
+            margin: 10px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            background-color: #34c759;
+            color: #0d1b0d;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #28a745;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.8);
+            transform: scale(1.05);
+        }
+
+        #result {
+            font-size: 1.8rem;
+            margin-top: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+        }
+
+        #result.correct {
+            color: #34c759;
+        }
+
+        #result.incorrect {
+            color: #e74c3c; /* Rojo para incorrecto */
+        }
+    </style>
+</head>
+<body>
+    <h1>Trivia Infinita</h1>
+    <div id="game-container">
+        <p id="question-text" class="question-text">Cargando pregunta...</p>
+        <ul id="options" class="options"></ul>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Función para cargar preguntas de la API OpenTDB
+        async function fetchQuestion() {
+            const response = await fetch("https://opentdb.com/api.php?amount=1&type=multiple");
+            const data = await response.json();
+            const questionData = data.results[0];
+            displayQuestion(questionData);
+        }
+
+        // Mostrar la pregunta y opciones en la interfaz
+        function displayQuestion(questionData) {
+            const questionText = document.getElementById("question-text");
+            const optionsContainer = document.getElementById("options");
+
+            // Mostrar pregunta
+            questionText.innerHTML = decodeHTML(questionData.question);
+
+            // Crear opciones mezcladas
+            const options = [...questionData.incorrect_answers, questionData.correct_answer];
+            options.sort(() => Math.random() - 0.5);
+
+            // Renderizar las opciones en botones
+            optionsContainer.innerHTML = "";
+            options.forEach(option => {
+                const li = document.createElement("li");
+                li.className = "option";
+                const button = document.createElement("button");
+                button.textContent = decodeHTML(option);
+                button.onclick = () => checkAnswer(option, questionData.correct_answer);
+                li.appendChild(button);
+                optionsContainer.appendChild(li);
+            });
+
+            document.getElementById("result").textContent = ""; // Limpiar resultado previo
+        }
+
+        // Comprobar si la respuesta seleccionada es correcta
+        function checkAnswer(selectedOption, correctAnswer) {
+            const result = document.getElementById("result");
+
+            if (selectedOption === correctAnswer) {
+                result.textContent = "¡Correcto! 🎉";
+                result.className = "correct";
+            } else {
+                result.textContent = "Incorrecto. 😢 La respuesta era: " + decodeHTML(correctAnswer);
+                result.className = "incorrect";
+            }
+
+            // Cargar nueva pregunta tras 2 segundos
+            setTimeout(() => fetchQuestion(), 2000);
+        }
+
+        // Decodificar texto HTML (para caracteres especiales)
+        function decodeHTML(html) {
+            const txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value;
+        }
+
+        // Iniciar el juego cargando la primera pregunta
+        fetchQuestion();
+    </script>
+</body>
+</html>
